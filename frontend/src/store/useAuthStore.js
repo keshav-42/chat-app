@@ -3,7 +3,9 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
+const BASE_URL =
+  import.meta.env.VITE_SOCKET_BASE_URL ||
+  (import.meta.env.MODE === "development" ? "http://localhost:4000" : "/");
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -16,7 +18,11 @@ export const useAuthStore = create((set, get) => ({
 
   checkAuth: async () => {
     try {
+      console.log("=== CHECKING AUTH ===");
       const res = await axiosInstance.get("/auth/check");
+      console.log("Auth response:", res.data);
+      console.log("User ID from backend:", res.data._id);
+      console.log("User name from backend:", res.data.fullName);
 
       set({ authUser: res.data });
       get().connectSocket();
@@ -90,16 +96,34 @@ export const useAuthStore = create((set, get) => ({
       query: {
         userId: authUser._id,
       },
+      withCredentials: true,
     });
-    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
+
+    socket.on("connect_error", (error) => {
+      console.log("Connection error:", error);
+    });
 
     set({ socket: socket });
 
     socket.on("getOnlineUsers", (userIds) => {
+      console.log("Online users updated:", userIds);
+      console.log("Current user ID:", authUser._id);
+      console.log("Am I in the list?", userIds.includes(authUser._id));
       set({ onlineUsers: userIds });
     });
   },
   disconnectSocket: () => {
-    if (get().socket?.connected) get().socket.disconnect();
+    if (get().socket?.connected) {
+      get().socket.disconnect();
+    }
+    set({ socket: null });
   },
 }));

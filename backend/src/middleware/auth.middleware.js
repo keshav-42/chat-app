@@ -21,6 +21,11 @@ export const protectRoute = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    console.log("=== AUTH MIDDLEWARE DEBUG ===");
+    console.log("Decoded token userId:", decoded.userId);
+    console.log("Found user ID:", user._id.toString());
+    console.log("User name:", user.fullName);
+
     req.user = user;
 
     next();
