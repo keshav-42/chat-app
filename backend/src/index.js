@@ -26,8 +26,8 @@ app.use(
 
       // In production, be more restrictive
       const allowedDomains = [
-        "https://yourproductiondomain.com",
-        "https://www.yourproductiondomain.com",
+        "https://chat-app-dn6f.onrender.com", // Your backend URL (for health checks)
+        "https://chat-app-lilac-sigma.vercel.app", // Your frontend URL on Vercel
       ];
 
       if (!origin || allowedDomains.includes(origin)) {
@@ -43,13 +43,13 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-}
+// Remove the frontend serving code since we're deploying separately
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+//   });
+// }
 
 server.listen(PORT, "0.0.0.0", () => {
   // server comes from your socket.js file, which wraps the Express app inside an HTTP server instance.

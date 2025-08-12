@@ -15,8 +15,8 @@ const io = new Server(server, {
 
       // In production, be more restrictive
       const allowedDomains = [
-        "https://yourproductiondomain.com",
-        "https://www.yourproductiondomain.com",
+        "https://chat-app-dn6f.onrender.com", // Your backend URL
+        "https://chat-app-lilac-sigma.vercel.app", // Your frontend URL on Vercel
       ];
 
       if (!origin || allowedDomains.includes(origin)) {
