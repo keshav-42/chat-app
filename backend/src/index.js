@@ -13,7 +13,8 @@ dotenv.config();
 const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
-app.use(express.json()); //parse incoming json requests(Like. POST)
+app.use(express.json({ limit: "50mb" })); //parse incoming json requests(Like. POST) with increased limit for images
+app.use(express.urlencoded({ limit: "50mb", extended: true })); //parse URL-encoded requests with increased limit
 app.use(cookieParser()); //parse incoming cookie requests
 app.use(
   cors({
